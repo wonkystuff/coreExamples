@@ -111,7 +111,7 @@ void loop(void)
             // the frequency of which determines when we calculate
             // another byte-beat byte
             phase_inc = pgm_read_word(&octaveLookup[ADCREDUX(adcVal, DACBITS)]);
-            phase_inc = phase_inc >> 6;
+            //phase_inc = phase_inc >> 10;
             break;
     }
 }
@@ -141,16 +141,14 @@ ISR(TIM0_COMPA_vect)
 
          if(sqlevel){
             sqlevel = false;
-            digitalWrite(PB1, HIGH);
+            //digitalWrite(PB1, HIGH);
+            val = 0;
          }
-          //val = 0;
         else{
             sqlevel = true;
-            digitalWrite(PB1, LOW);
-          
+            //digitalWrite(PB1, LOW);
+            val = 65535; 
         }
-          //val = 65535;
-
         OSCOUTREG = val;
     }
 }
