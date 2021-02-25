@@ -3,14 +3,10 @@
 
   Turns an LED on for one second, then off for one second, repeatedly.
 
-  modified 8 May 2014
-  by Scott Fitzgerald
-  modified 2 Sep 2016
-  by Arturo Guadalupi
-  modified 8 Sep 2016
-  by Colby Newman
-  modified 23 Feb 2021
-  by John Tuffen
+  modified 8 May 2014   by Scott Fitzgerald
+  modified 2 Sep 2016   by Arturo Guadalupi
+  modified 8 Sep 2016   by Colby Newman
+  modified 23 Feb 2021  by John Tuffen
 
   This example code is in the public domain.
 
