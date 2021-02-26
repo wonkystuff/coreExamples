@@ -2,7 +2,7 @@
  * Like Blink, but WITH SOUND! Bleeps at an interval determined
  * by Control 2, with a pitch determined by Control 3
  *
- * modified 25 Feb 2021  by John Tuffen
+ * modified Feb 2021  by John Tuffen
  *
  * This example code is in the public domain.
  */
@@ -29,7 +29,7 @@ uint16_t phase_inc = 0x80;
 void
 loop(void)
 {
-  phase_inc = analogRead(wsKnob3);
+  phase_inc = (analogRead(wsKnob3) + 1) << 2;
 }
 
 // This ISR is running at the rate specified by SR (e.g 50kHz)
@@ -37,7 +37,6 @@ void
 wsIsr(void)
 {
   static uint16_t phase  = 0;
-
   phase += phase_inc;   // move the oscillator's accumulator on
   if (phase > 0x8000)   // half way between 0 and 0xffff
   {
