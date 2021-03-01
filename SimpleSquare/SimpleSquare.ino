@@ -1,6 +1,9 @@
 /*
- * Like Blink, but WITH SOUND! Bleeps at an interval determined
- * by Control 2, with a pitch determined by Control 3
+ * SImplest square-wave generator - emits the same signal
+ * on both audio outputs.
+ *
+ * Controls:
+ *   Knob III :: Pitch
  *
  * modified Feb 2021  by John Tuffen
  *
@@ -38,12 +41,15 @@ wsIsr(void)
 {
   static uint16_t phase  = 0;
   phase += phase_inc;   // move the oscillator's accumulator on
-  if (phase > 0x8000)   // half way between 0 and 0xffff
+
+  if (phase > 0x8000)   // half way between 0 and 0xffff gives us a 50% duty-cycle
   {
     wsPinSet(wsOut1);
+    wsPinSet(wsOut2);
   }
   else
   {
     wsPinClear(wsOut1);
+    wsPinClear(wsOut2);
   }
 }
