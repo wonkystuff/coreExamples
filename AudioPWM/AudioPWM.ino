@@ -1,8 +1,7 @@
 /*
- * Another square-wave generator, but this one uses PWM
- * on output 1 so, by changing the value written to the
- * PWM output we can modify the amplitude of the square
- * wave… Output 2 is the same pitch square wave at full
+ * Yet another square-wave generator, but this one now
+ * allows the with of the output square wave to be changed
+ * Output 2 is the same pitch square wave at full
  * volume
  *
  * Controls:
