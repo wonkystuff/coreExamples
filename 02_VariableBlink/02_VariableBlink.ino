@@ -31,6 +31,6 @@ loop(void)
 
   delay(del);                       // wait for a second
   digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
-  del = analogRead(A3);
+  del = analogRead(A2);
   delay(del);                       // wait for a second
 }
