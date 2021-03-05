@@ -1,7 +1,7 @@
 /*
-  Classic Blink - but for the Core1 hardware
+  Modified Blink - but for the Core1 hardware
 
-  Turns an LED on for one second, then off for one second, repeatedly.
+  Turns an LED on for some time, then off for some time, repeatedly.
 
   modified 8 May 2014   by Scott Fitzgerald
   modified 2 Sep 2016   by Arturo Guadalupi
@@ -25,12 +25,12 @@ setup(void)
 void
 loop(void)
 {
-  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
   // read the value from the sensor:
-  uint16_t del = analogRead(A1);
+  uint16_t del = analogRead(wsKnob2);
 
   delay(del);                       // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  del = analogRead(A2);
+  digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
+  del = analogRead(wsKnob3);
   delay(del);                       // wait for a second
 }

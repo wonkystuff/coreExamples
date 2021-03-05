@@ -16,14 +16,13 @@
 void
 setup(void)
 {
-  wsInit();             // general initialisation
+  wsInit();                 // general initialisation
 
-  wsInitISR(20000);     // initialise the timer to give us an interrupt at the sample rate
-                        // make sure to define the ISR!
-  pinMode(wsOut1, OUTPUT); // output 1
-  pinMode(wsOut2, OUTPUT); // output 2
+  pinMode(wsOut1, OUTPUT);  // output 1
+  pinMode(wsOut2, OUTPUT);  // output 2
 
-  sei();                // enable interrupts before we get going
+  wsInitAudioLoop(20000);   // initialise the timer to give us an interrupt at the sample rate
+                            // make sure to define the wsAudioLoop function!
 }
 
 uint16_t phase_inc = 0x80;
