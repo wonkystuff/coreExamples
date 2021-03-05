@@ -46,7 +46,7 @@ loop(void)
 
 // This ISR is running at the rate specified by SR (e.g 50kHz)
 void
-wsIsr(void)
+wsAudioLoop(void)
 {
   static uint16_t phase  = 0;
   phase += phase_inc;   // move the oscillator's accumulator on
