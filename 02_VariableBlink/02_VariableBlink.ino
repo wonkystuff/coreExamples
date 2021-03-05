@@ -27,10 +27,10 @@ loop(void)
 {
   digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
   // read the value from the sensor:
-  uint16_t del = analogRead(wsKnob2);
+  uint16_t del = analogRead(A1);
 
   delay(del);                       // wait for a second
   digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
-  del = analogRead(wsKnob3);
+  del = analogRead(A3);
   delay(del);                       // wait for a second
 }
