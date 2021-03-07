@@ -42,14 +42,23 @@ volatile accumulator_t accum[NUMVOICES];
 void
 loop(void)
 {
+  uint16_t tmp = analogRead(wsKnob1);
+  uint8_t offs;
+  if (tmp < 768)
+  {
+    offs = 0;
+  } else {
+    offs = (tmp-768) >> 3;
+  }
+  
   accum[0].phase_inc = (analogRead(wsKnob2) + 1) << 2;
-  accum[1].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob3) >> 7)+1) + 1; // 3 bits: 0-7
-  accum[2].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob4) >> 7)+1) - 1;
+  accum[1].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob3) >> 7)+1) + offs; // 3 bits: 0-7
+  accum[2].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob4) >> 7)+1) - offs;
   accum[3].phase_inc = accum[0].phase_inc/2;
   accum[4].phase_inc = accum[1].phase_inc/2;
   accum[5].phase_inc = accum[2].phase_inc/2;
-  accum[6].phase_inc = accum[0].phase_inc+1;
-  accum[7].phase_inc = accum[0].phase_inc-1;
+  accum[6].phase_inc = accum[0].phase_inc+offs;
+  accum[7].phase_inc = accum[0].phase_inc-offs;
 }
 
 // This ISR is running at the rate specified by SR (e.g 50kHz)
