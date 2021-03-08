@@ -4,6 +4,7 @@
  * Output 2 - Square sub-oscillator
  *
  * Controls:
+ *   Knob I   :: Detune
  *   Knob II  :: Base pitch (4 oscillators)
  *   Knob III :: relative oscillators #1 (2 oscillators)
  *   Knob IV  :: relative oscillators #2 (2 oscillators)
