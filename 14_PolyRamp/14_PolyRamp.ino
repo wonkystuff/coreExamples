@@ -21,12 +21,8 @@ void
 setup(void)
 {
   wsInit();                 // general initialisation
-
-  pinMode(wsOut1, OUTPUT);  // output 1
-  pinMode(wsOut2, OUTPUT);  // output 2
-  
-  wsInitPWM();
-  wsInitAudioLoop(20000);   // initialise the timer to give us an interrupt at the sample rate
+  wsInitPWM();              // output 1 is now controlled by PWM
+  wsInitAudioLoop();        // initialise the timer to give us an interrupt at the sample rate
                             // make sure to define the wsAudioLoop function!
 }
 
@@ -51,7 +47,7 @@ loop(void)
   } else {
     offs = (tmp-768) >> 3;
   }
-  
+
   accum[0].phase_inc = (analogRead(wsKnob2) + 1) << 2;
   accum[1].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob3) >> 7)+1) + offs; // 3 bits: 0-7
   accum[2].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob4) >> 7)+1) - offs;

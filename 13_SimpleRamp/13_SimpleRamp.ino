@@ -18,12 +18,8 @@ void
 setup(void)
 {
   wsInit();                 // general initialisation
-
-  pinMode(wsOut1, OUTPUT);  // output 1
-  pinMode(wsOut2, OUTPUT);  // output 2
-  
-  wsInitPWM();
-  wsInitAudioLoop(20000);   // initialise the timer to give us an interrupt at the sample rate
+  wsInitPWM();              // output 1 is now controlled by PWM
+  wsInitAudioLoop();        // initialise the timer to give us an interrupt at the sample rate
                             // make sure to define the wsAudioLoop function!
 }
 
