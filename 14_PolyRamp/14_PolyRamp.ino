@@ -21,7 +21,7 @@ void
 setup(void)
 {
   wsInit();                 // general initialisation
-  wsInitPWM();              // output 1 is now controlled by PWM
+  wsInitPWM();              // We're using PWM here
   wsInitAudioLoop();        // initialise the timer to give us an interrupt at the sample rate
                             // make sure to define the wsAudioLoop function!
 }
@@ -47,15 +47,18 @@ loop(void)
   } else {
     offs = (tmp-768) >> 3;
   }
+  
+  accum[0].phase_inc = wsFetchOctaveLookup(analogRead(wsKnob2));
+  accum[1].phase_inc = accum[0].phase_inc/2;
+  accum[2].phase_inc = accum[0].phase_inc+offs;
+  accum[3].phase_inc = accum[0].phase_inc-offs;
 
-  accum[0].phase_inc = (analogRead(wsKnob2) + 1) << 2;
-  accum[1].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob3) >> 7)+1) + offs; // 3 bits: 0-7
-  accum[2].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob4) >> 7)+1) - offs;
-  accum[3].phase_inc = accum[0].phase_inc/2;
-  accum[4].phase_inc = accum[1].phase_inc/2;
-  accum[5].phase_inc = accum[2].phase_inc/2;
-  accum[6].phase_inc = accum[0].phase_inc+offs;
-  accum[7].phase_inc = accum[0].phase_inc-offs;
+  accum[4].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob3) >> 7)+1) + offs; // 3 bits: 0-7
+  accum[5].phase_inc = accum[4].phase_inc/2;
+
+  accum[6].phase_inc = accum[0].phase_inc * ((analogRead(wsKnob4) >> 7)+1) - offs;
+  accum[7].phase_inc = accum[6].phase_inc/2;
+
 }
 
 // This ISR is running at the rate specified by SR (e.g 50kHz)
