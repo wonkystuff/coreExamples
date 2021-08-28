@@ -1,6 +1,6 @@
 /*
- * Polyphonic Ramp-wave generator.
- * Output 1 - Ramp waves;
+ * Polyphonic wavetable-lookup drone generator (max sample rate ~35kHz).
+ * Output 1 - wavetable output;
  * Output 2 - Square sub-oscillator
  *
  * Controls:
@@ -16,9 +16,15 @@
 
 #include "wonkystuffCommon.h"
 
-// For speed we place the single wavetable in RAM,
-// but this will need initialising by our startup
-// code.
+// For speed the single wavetable is in RAM, but we need
+// to initialise it in the startup code. The following ROM
+// bytes are the initialiser - a single-cycle of a sinewave.
+// Other waveshapes can of course be calculated and placed here.
+//
+// Since the initialisation is not time-critical, it is of course
+// also possible to do the mathematical calculation of the
+// initialiser in the setup() function...
+
 #define WTSIZE  128u
 const uint8_t sine[WTSIZE] PROGMEM = {
   0x80, 0x86, 0x8c, 0x92, 0x98, 0x9e, 0xa4, 0xaa, 0xb0, 0xb6, 0xbb, 0xc1, 0xc6, 0xcb, 0xd0, 0xd5, 
@@ -29,7 +35,7 @@ const uint8_t sine[WTSIZE] PROGMEM = {
   0x26, 0x21, 0x1d, 0x19, 0x16, 0x13, 0x0f, 0x0d, 0x0a, 0x08, 0x06, 0x04, 0x03, 0x02, 0x01, 0x01, 
   0x01, 0x01, 0x01, 0x02, 0x03, 0x04, 0x06, 0x08, 0x0a, 0x0d, 0x0f, 0x13, 0x16, 0x19, 0x1d, 0x21, 
   0x26, 0x2a, 0x2f, 0x34, 0x39, 0x3e, 0x44, 0x49, 0x4f, 0x55, 0x5b, 0x61, 0x67, 0x6d, 0x73, 0x79, 
-  };
+};
 
 uint8_t waveTable[WTSIZE];
 
@@ -49,8 +55,11 @@ setup(void)
   for(i=0; i<WTSIZE;i++)
   {
     waveTable[i] = pgm_read_byte(&sine[i])/NUMVOICES; // ensure that when we add up all of the
-                                                      // voices in the output, they will not
+                                                      // voices in the output, they will never
                                                       // exceed 8 bits (0-255)
+                                                      // The alternative is to do addition and
+                                                      // division at output calculation time,
+                                                      // but we have less time available then...
   }
   
   wsInit();                 // general initialisation
@@ -97,10 +106,11 @@ wsAudioLoop(void)
   int i;
   for(i=0; i< NUMVOICES;i++)
   {
-    outVal += waveTable[accum[i].phase >> 9]; // Wavetable is 128 entries, so shift the
-                                              // 16bit phase counter to leave us with 7bits
+    uint8_t p = accum[i].phase >> 9;          // Wavetable is 128 entries, so shift the
+                                              // 16bit phase-accumulator value to leave us with 7bits
                                               // with which to index into the table
-    accum[i].phase += accum[i].phase_inc;     // move the oscillator's accumulator on
+    outVal += waveTable[p];                   // read the wavetable value at the current phase position
+    accum[i].phase += accum[i].phase_inc;     // move the oscillator's phase-accumulator on
   }
 
   wsWriteToPWM(outVal);
