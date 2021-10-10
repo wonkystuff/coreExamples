@@ -1,4 +1,23 @@
-#include "wonkystuffCommon.h"
+/*
+ *
+ * dr1.a 'drone synth' code
+ * Output 1 - Main audio;
+ * Output 2 - Square-wave sub-oscillator
+ *
+ * Controls:
+ *   Knob I   :: 'perturbation' (random switching of wavetables
+ *   Knob II  :: wavetable select (Sine, Triangle, Square, Saw with intermediate positions being a blend)
+ *   Knob III :: Main oscillator (Fundamental pitch)
+ *   Knob IV  :: Secondary oscillator (enveloped by the main oscillator)
+ *
+ * 2018-2021  by John Tuffen for wonkystuff®
+ *   https://wonkystuff.net/
+ *   https://wonkystuff.github.io/arduino/
+ *
+ * This example code is in the public domain.
+ */
+
+ #include "wonkystuffCommon.h"
 
 #include "dr1_defs.h"
 
@@ -13,7 +32,7 @@ uint16_t          pi_sync;    // sync oscillator current phase increment (how mu
 void
 setup(void)
 {
-  
+
   wsInit();                 // general initialisation
   wsInitPWM();              // We're using PWM here
   wsInitAudioLoop();        // initialise the timer to give us an interrupt at the sample rate
@@ -79,14 +98,11 @@ loop(void)
       wave2 = waves[(waveSelect >> 1) + (waveSelect & 1)];  // 0-4
       break;
 
-    case 2:   // ADC 2 is on physical pin 3
+    case MAINKNOB:   // Main Oscillator (fundamental) frequency
       pi_sync = pgm_read_word(&octaveLookup[adcVal]);
       break;
 
-    case 3:   // ADC 3 is on physical pin 2
-
-      // Let's make this an offset from the phase sync - we're not adding the octave here so that the
-      // slave oscillator can have a frequency down to an octave below the main freqency
+    case SECONDARYKNOB:   // Secondary Oscillator ('resonance') frequency
       pi = pgm_read_word(&octaveLookup[adcVal]);
       break;
   }
@@ -123,7 +139,7 @@ wsAudioLoop(void)
   phase_sync += pi_sync;
   if (phase_sync < old_sync)
   {
-    PORTB ^= 1;     // Sub-oscillator
+    wsToggleOutput(wsOut2);     // Sub-oscillator
     phase = 0;
   }
 
