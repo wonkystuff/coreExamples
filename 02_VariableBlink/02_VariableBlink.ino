@@ -13,10 +13,6 @@
   http://www.arduino.cc/en/Tutorial/Blink
 */
 
-#ifdef DISABLEMILLIS
-#error "This example uses 'delay()' so millis/micros must be enabled in the Tools menu."
-#endif
-
 // the setup function runs once when you press reset or power the board
 void
 setup(void)
