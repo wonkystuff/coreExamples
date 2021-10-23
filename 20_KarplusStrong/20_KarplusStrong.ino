@@ -1,16 +1,19 @@
 /*
- * Karplus-Strong synthesis example
+ * Karplus-Strong synthesis example. This is an early 'physical-model'
+ * synthesis method from 1983, used to synthesise plucked-string sounds.
+ * More information can be found here:
+ *    https://en.wikipedia.org/wiki/Karplus–Strong_string_synthesis
  *
- * Output 1 - wavetable output;
- * Output 2 - Square sub-oscillator
+ * Output 1 - audio output;
+ * Output 2 - not used
  *
  * Controls:
- *   Knob I   :: Detune
- *   Knob II  :: Base pitch (4 oscillators)
- *   Knob III :: relative oscillators #1 (2 oscillators)
- *   Knob IV  :: relative oscillators #2 (2 oscillators)
+ *   Knob I   :: not used
+ *   Knob II  :: Stimulation type (noise, ramp, square, triangle)
+ *   Knob III :: trigger input
+ *   Knob IV  :: pitch
  *
- * modified Mar 2021  by John Tuffen
+ * modified Oct 2021  by John Tuffen
  *
  * This example code is in the public domain.
  */
@@ -45,7 +48,7 @@ setup(void)
   {
     waveTable[i] = wsRnd8();    // prefill with noise
   }
-  
+
   wsInit();                 // general initialisation
   wsInitPWM();              // We're using PWM here
   wsInitAudioLoop();        // initialise the timer to give us an interrupt at the sample rate
@@ -57,11 +60,12 @@ volatile accumulator_t accum;
 // the loop function runs over and over again forever
 void loop()
 {
-  uint8_t stimType = analogRead(wsKnob2) >> 7;
-  uint8_t stimAmp = analogRead(wsKnob3) >> 7; // gives us 0-7 from 3 bits.
+  uint8_t stimType = analogRead(wsKnob2) >> 8;  // gives us 0-3 from 2 bits.
+  uint8_t stimAmp = analogRead(wsKnob3) >> 7;   // gives us 0-7 from 3 bits.
   static uint8_t lastStimAmp;
 
-  accum.phase_inc = pgm_read_word(&octaveLookup[analogRead(wsKnob4)]);
+  // divide the phase increment value by 2 here otherwise things get very squeaky/allias-y
+  accum.phase_inc = pgm_read_word(&octaveLookup[analogRead(wsKnob4)])/2;
 
   if ((stimAmp != 0) &&
       (lastStimAmp < stimAmp))
@@ -73,15 +77,17 @@ void loop()
       char v=0;
       switch (stimType)
       {
+        // 'periodic' inputs are half amplitude because otherwise they're pretty loud
+        case 1:         // ramp
+          v = (i-128)/2;
+          break;
+        case 2:         // square
+          v = (i<128) ? -64 : 64;
+          break;
+        case 3:         // triangle
+          v = (i < 128 ? (i*2) - 128 : ((255-i)*2)-128)/2;
+          break;
         case 0:
-          v = i < 128 ? (i*2) - 128 : ((255-i)*2)-128;
-          break;
-        case 4:
-          v = i-128;             // ramp
-          break;
-        case 7:
-          v = (i<128) ? -128 : 127;  // square
-          break;
         default:
           v = wsRnd8() - 128;  // noise
           break;
@@ -92,6 +98,9 @@ void loop()
   lastStimAmp = stimAmp;
 }
 
+// If TWO is defined then two adjacent samples are averaged
+// in the algorithm, otherwise 4 are averaged. Fewer samples
+// means a longer decay.
 #define TWO (1)
 
 // This ISR is running at the rate specified by SR (e.g 50kHz)
@@ -123,6 +132,6 @@ wsAudioLoop(void)
   avIdx &=0x03;
   waveTable[p] = avBuf[0]/4 + avBuf[1]/4 + avBuf[2]/4 + avBuf[3]/4;
 #endif
-  
+
   accum.phase += accum.phase_inc;       // move the oscillator's phase-accumulator on
 }
