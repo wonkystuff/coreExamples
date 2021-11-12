@@ -1,13 +1,13 @@
 /*
  * Polyphonic Ramp-wave generator.
  * Output 1 - Ramp waves;
- * Output 2 - Square sub-oscillator
+ * Output 2 - Square sub-oscillator (octave below oscillator 1)
  *
  * Controls:
- *   Knob I   :: Detune
- *   Knob II  :: Base pitch (4 oscillators)
- *   Knob III :: relative oscillators #1 (2 oscillators)
- *   Knob IV  :: relative oscillators #2 (2 oscillators)
+ *   Knob I   :: <not used>
+ *   Knob II  :: Pitch 1
+ *   Knob III :: Pitch 2
+ *   Knob IV  :: Pitch 3
  *
  * modified Mar 2021  by John Tuffen
  *
@@ -39,15 +39,6 @@ volatile accumulator_t accum[NUMVOICES];
 void
 loop(void)
 {
-  uint16_t tmp = analogRead(wsKnob1);
-  uint8_t offs;
-  if (tmp < 768)
-  {
-    offs = 0;
-  } else {
-    offs = (tmp-768) >> 3;
-  }
-  
   accum[0].phase_inc = wsFetchOctaveLookup(analogRead(wsKnob2));
   accum[1].phase_inc = wsFetchOctaveLookup(analogRead(wsKnob3));
   accum[2].phase_inc = wsFetchOctaveLookup(analogRead(wsKnob4));
