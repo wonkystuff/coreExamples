@@ -38,7 +38,7 @@ void
 loop(void)
 {
   // OR-ing analogue values with 3 ensures that they are never zero, and also de-jitters to a certain extent
-  monoLength = (1023-(analogRead(wsKnob3)) | 0x0003);  // make the monostable time shorten as knob turns clockwise
+  monoLength = (1023-(analogRead(wsKnob3))) | 0x0003;  // make the monostable time shorten as knob turns clockwise
   clkFreq =  wsFetchOctaveLookup(analogRead(wsKnob4) | 0x0003);
   outMode = analogRead(wsKnob1) > 768; // true/false
 }
