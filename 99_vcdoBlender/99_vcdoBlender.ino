@@ -27,7 +27,7 @@
 
 #include "wonkystuffCommon.h"
 
-extern const uint8_t vcdoWaves[32][64];
+extern const uint8_t PROGMEM vcdoWaves[32][64];
 uint16_t       phase;      // The accumulated phase (distance through the wavetable)
 uint16_t       phase_inc;  // wavetable current phase increment (how much phase will increase per sample)
 uint8_t        bank;
@@ -78,8 +78,13 @@ wsAudioLoop(void)
   // Write out the audio sample to remove jitter caused by the calculations afterward
   wsWriteToPWM(outVal);
 
+  uint16_t oldPhase = phase;
   // Move the phase accumulator forward
   phase += phase_inc;
+  if (phase < oldPhase)
+  {
+    wsToggleOutput(wsOut2);
+  }
 
   uint8_t p = (phase >> 8) >> 2;  // wavetable is only 64 entries, so indexed with 6 bits
 
