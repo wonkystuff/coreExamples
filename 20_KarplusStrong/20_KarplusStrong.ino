@@ -64,8 +64,8 @@ void loop()
   uint8_t stimAmp = analogRead(wsKnob3) >> 7;   // gives us 0-7 from 3 bits.
   static uint8_t lastStimAmp;
 
-  // divide the phase increment value by 2 here otherwise things get very squeaky/allias-y
-  accum.phase_inc = pgm_read_word(&octaveLookup[analogRead(wsKnob4)])/2;
+  // divide the phase increment value by 2 here otherwise things get very squeaky/alias-y
+  accum.phase_inc = wsFetchOctaveLookup(analogRead(wsKnob4))/2;
 
   if ((stimAmp != 0) &&
       (lastStimAmp < stimAmp))
